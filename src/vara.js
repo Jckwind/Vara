@@ -33,18 +33,31 @@ const Vara = function (elem, fontSource, text, properties) {
   this.defs = this.createNode("defs", {});
   this.filter = this.createNode("filter", {id: "noiseFilter"});
   var turbulence = this.createNode("feTurbulence", {
-    type: "fractalNoise",
-    baseFrequency: "0.4",
-    numOctaves: "1",
-    result: "noise"
+    baseFrequency: "0.05",
+    result: "turbulenceResult"
   }, false);
+  
   var displacementMap = this.createNode("feDisplacementMap", {
     in: "SourceGraphic",
-    in2: "noise",
-    scale: "5"
+    in2: "turbulenceResult",
+    scale: "3"
   }, false);
+  
+  var gaussianBlur = this.createNode("feGaussianBlur", {
+    stdDeviation: "0.25",
+    result: "blurResult"
+  }, false);
+  
+  var composite = this.createNode("feComposite", {
+    operator: "in",
+    in: "SourceGraphic",
+    in2: "blurResult"
+  }, false);
+  
   this.filter.appendChild(turbulence);
   this.filter.appendChild(displacementMap);
+  this.filter.appendChild(gaussianBlur);
+  this.filter.appendChild(composite);
   this.defs.appendChild(this.filter);
   this.svg.appendChild(this.defs);
   this.element.appendChild(this.svg);
