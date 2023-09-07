@@ -250,7 +250,7 @@ Vara.prototype.createText = function () {
         : this.texts[j].lineHeight / fontSize;
     // outerLayer is used to contain the entire paragraph.
     var outerLayer = this.createNode("g", {
-      class: "outer",
+      class: "outer-test",
       transform: "translate(0,0)",
       "data-text": this.texts[j].text,
     });
