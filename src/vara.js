@@ -37,12 +37,12 @@ const Vara = function (elem, fontSource, text, properties) {
     baseFrequency: "0.4",
     numOctaves: "1",
     result: "noise"
-  });
+  }, false);
   var displacementMap = this.createNode("feDisplacementMap", {
     in: "SourceGraphic",
     in2: "noise",
-    scale: "10"
-  });
+    scale: "5"
+  }, false);
   this.filter.appendChild(turbulence);
   this.filter.appendChild(displacementMap);
   this.defs.appendChild(this.filter);
@@ -58,16 +58,17 @@ const Vara = function (elem, fontSource, text, properties) {
  * @param {object} v Object with properties of the element
  * returns {node}
  */
-Vara.prototype.createNode = function (n, v) {
+Vara.prototype.createNode = function (n, v, convertToKebab = true) {
   n = document.createElementNS("http://www.w3.org/2000/svg", n);
-  for (var p in v)
-    n.setAttributeNS(
-      null,
-      p.replace(/[A-Z]/g, function (m, p, o, s) {
+  for (var p in v) {
+    var attributeName = p;
+    if (convertToKebab) {
+      attributeName = p.replace(/[A-Z]/g, function (m) {
         return "-" + m.toLowerCase();
-      }),
-      v[p]
-    );
+      });
+    }
+    n.setAttributeNS(null, attributeName, v[p]);
+  }
   return n;
 };
 
