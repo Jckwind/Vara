@@ -34,11 +34,13 @@ const Vara = function (elem, fontSource, text, properties) {
   this.filter = this.createNode("filter", {id: "noiseFilter"});
   var turbulence = this.createNode("feTurbulence", {
     type: "fractalNoise",
-    baseFrequency: "0.01",
-    numOctaves: "10"
+    baseFrequency: "0.4",
+    numOctaves: "1",
+    result: "noise"
   });
   var displacementMap = this.createNode("feDisplacementMap", {
     in: "SourceGraphic",
+    in2: "noise",
     scale: "10"
   });
   this.filter.appendChild(turbulence);
@@ -250,7 +252,7 @@ Vara.prototype.createText = function () {
         : this.texts[j].lineHeight / fontSize;
     // outerLayer is used to contain the entire paragraph.
     var outerLayer = this.createNode("g", {
-      class: "outer-test",
+      class: "outer",
       transform: "translate(0,0)",
       "data-text": this.texts[j].text,
     });
