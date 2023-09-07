@@ -30,26 +30,6 @@ const Vara = function (elem, fontSource, text, properties) {
   this.svg = this.createNode("svg", {
     width: "100%",
   });
-  this.defs = this.createNode("defs", {});
-  this.filter = this.createNode("filter", {id: "noiseFilter"});
-  this.turbulence = this.createNode("feTurbulence", {
-    type: "fractalNoise",
-    baseFrequency: "0.01",
-    numOctaves: "2",
-    result: "turbulenceResult"
-  });
-  this.displacementMap = this.createNode("feDisplacementMap", {
-    in: "SourceGraphic",
-    in2: "turbulenceResult",
-    scale: "20",
-    xChannelSelector: "R",
-    yChannelSelector: "G"
-  });
-  this.filter.appendChild(this.turbulence);
-  this.filter.appendChild(this.displacementMap);
-  this.defs.appendChild(this.filter);
-  this.svg.appendChild(this.defs);
-  this.svg.setAttribute("filter", "url(#noiseFilter)");
   this.element.appendChild(this.svg);
   this.font = document.createElement("object");
   this.getSVGData();
@@ -273,7 +253,24 @@ Vara.prototype.createText = function () {
         var text = this.texts[j].text[x][i];
         // Group which contains the letter
         var cGroup = this.createNode("g");
+        
+        var uniqueFilterID = "noiseFilter" + j + "_" + x + "_" + i;
+        var filter = this.createNode("filter", {id: uniqueFilterID});
+        var turbulence = this.createNode("feTurbulence", {
+          type: "fractalNoise",
+          baseFrequency: "0.01",
+          numOctaves: "10"
+        });
+        var displacementMap = this.createNode("feDisplacementMap", {
+          in: "SourceGraphic",
+          scale: "10"
+        });
+        filter.appendChild(turbulence);
+        filter.appendChild(displacementMap);
+        cGroup.appendChild(filter);
+        fg.setAttribute("filter", "url(#noiseFilter)");
         fg.appendChild(cGroup);
+
         var correction = 0;
         var paths =
           this.characters[text.charCodeAt(0)] != undefined || text == " "
@@ -293,6 +290,7 @@ Vara.prototype.createText = function () {
             "stroke-linejoin": _this.contents.p.slj,
           });
           cGroup.appendChild(path);
+          path.setAttribute("filter", "url(#" + uniqueFilterID + ")");
           path.setAttribute(
             "transform",
             "translate(" + e.mx + "," + -e.my + ")"
