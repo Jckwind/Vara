@@ -30,6 +30,26 @@ const Vara = function (elem, fontSource, text, properties) {
   this.svg = this.createNode("svg", {
     width: "100%",
   });
+  this.defs = this.createNode("defs", {});
+  this.filter = this.createNode("filter", {id: "noiseFilter"});
+  this.turbulence = this.createNode("feTurbulence", {
+    type: "fractalNoise",
+    baseFrequency: "0.01",
+    numOctaves: "2",
+    result: "turbulenceResult"
+  });
+  this.displacementMap = this.createNode("feDisplacementMap", {
+    in: "SourceGraphic",
+    in2: "turbulenceResult",
+    scale: "20",
+    xChannelSelector: "R",
+    yChannelSelector: "G"
+  });
+  this.filter.appendChild(this.turbulence);
+  this.filter.appendChild(this.displacementMap);
+  this.defs.appendChild(this.filter);
+  this.svg.appendChild(this.defs);
+  this.svg.setAttribute("filter", "url(#noiseFilter)");
   this.element.appendChild(this.svg);
   this.font = document.createElement("object");
   this.getSVGData();
